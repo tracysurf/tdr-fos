@@ -74,7 +74,7 @@ Route::middleware('auth:sanctum')->group(function (){
     });
 });
 
-Route::post('/v1/auth/signIn', function (Request $request) {
+Route::post('/auth/signIn', function (Request $request) {
     $request->validate([
         'email'         => 'required|email',
         'password'      => 'required',
