@@ -21,7 +21,60 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/sanctum/token', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/albums', function(Request $request) {
+
+});
+
+Route::middleware('auth:sanctum')->group(function (){
+    Route::get('/albums', function(Request $request) {
+        $user = $request->user();
+
+
+        $orders = App\Order::where('customer_id', $user->ID)->get();
+
+        $return_array = [
+            'message'   => '',
+            'success'   => true,
+        ];
+
+        $data = [];
+        foreach($orders as $order)
+        {
+            $photos         = \App\Photo::where('order_id', $order->id)->get();
+            $rolls          = [];
+            $thumbnail_url  = '';
+
+            if($photos->count())
+            {
+                // Determine number of rolls
+                foreach($photos as $photo)
+                {
+                    if( ! isset($rolls[$photo->roll]))
+                        $rolls[$photo->roll] = 1;
+                }
+
+                $first_photo = \App\Photo::where('order_id', $order->id)->first();
+
+                $thumbnail_url = $first_photo->thumbnailURL('_md');
+            }
+
+            $data[] = [
+                'id'            => $order->id,
+                'name'          => $order->name,
+                'filmsCount'    => count($rolls),
+                'imagesCount'   => $photos->count(),
+                'date'          => $order->created_at,
+                'imageUrl'      => $thumbnail_url,
+            ];
+        }
+
+        $return_array['data'] = $data;
+
+        return $return_array;
+    });
+});
+
+Route::post('/v1/auth/signIn', function (Request $request) {
     $request->validate([
         'email'         => 'required|email',
         'password'      => 'required',
