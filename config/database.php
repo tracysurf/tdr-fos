@@ -63,6 +63,24 @@ return [
             ]) : [],
         ],
 
+        'wordpress' => [ // for WordPress database (used by Corcel)
+            'driver'            => 'mysql',
+            'host'              => env('WP_DB_HOST', '127.0.0.1'),
+            'port'              => env('WP_DB_PORT', '3306'),
+            'database'          => env('WP_DB_DATABASE', 'forge'),
+            'username'          => env('WP_DB_USERNAME', 'forge'),
+            'password'          => env('WP_DB_PASSWORD', ''),
+            'charset'           => 'utf8',
+            'collation'         => 'utf8_unicode_ci',
+            'prefix'            => 'wp_',
+            'prefix_indexes'    => true,
+            'strict'            => true,
+            'engine'            => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
