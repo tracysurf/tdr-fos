@@ -63,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function (){
                 'name'          => $order->name,
                 'filmsCount'    => count($rolls),
                 'imagesCount'   => $photos->count(),
-                'date'          => $order->created_at,
+                'date'          => $order->created_at->format('M j'),
                 'imageUrl'      => $thumbnail_url,
             ];
         }
