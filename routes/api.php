@@ -142,6 +142,52 @@ Route::middleware('auth:sanctum')->group(function (){
         return $return_array;
     });
 
+    Route::put('/albums/{order_id}/rolls/{roll_id}', function(Request $request, $order_id, $roll_id){
+
+        $return_array = [
+            'message'   => '',
+            'success'   => false,
+            'data'      => null,
+        ];
+
+        $user   = $request->user();
+        $order  = App\Order::find($order_id);
+
+        if( $order->customer_id !== $user->ID)
+        {
+            // Purposefully being obtuse here as to not confirm existence of this order id
+            $return_array['message'] = 'Order not found';
+            return $return_array;
+        }
+
+        if( ! $order)
+        {
+            $return_array['message'] = 'Order not found';
+            return $return_array;
+        }
+
+        $roll_name  = $request->get('name');
+
+        $photos = \App\Photo::where('order_id', $order_id)->where('roll', $roll_id)->get();
+
+        if( ! $photos)
+        {
+            $return_array['message'] = 'No roll with that id found';
+            return $return_array;
+        }
+
+        foreach($photos as $photo)
+        {
+            $photo->roll_name = $roll_name;
+            $photo->save();
+        }
+
+        $return_array['data']       = 'successful update';
+        $return_array['success']    = true;
+
+        return $return_array;
+    });
+
     Route::put('/albums/{order_id}', function(Request $request, $order_id){
 
         $return_array = [
