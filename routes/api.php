@@ -305,7 +305,42 @@ Route::middleware('auth:sanctum')->group(function (){
     });
 
     Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/rotate', function(Request $request, $order_id, $photo_id){
+        $return_array = [
+            'message'   => '',
+            'success'   => false,
+            'data'      => null,
+        ];
 
+        $user   = $request->user();
+        $order  = App\Order::find($order_id);
+
+        if( $order->customer_id !== $user->ID)
+        {
+            // Purposefully being obtuse here as to not confirm existence of this order id
+            $return_array['message'] = 'Order not found';
+            return $return_array;
+        }
+
+        if( ! $order)
+        {
+            $return_array['message'] = 'Order not found';
+            return $return_array;
+        }
+
+        $photo = \App\Photo::where('order_id', $order_id)->where('id', $photo_id)->first();
+
+        if( ! $photo)
+        {
+            $return_array['message'] = 'Photo not found';
+            return $return_array;
+        }
+
+        // TODO: Rotate here
+
+        $return_array['data']       = 'updated';
+        $return_array['success']    = true;
+
+        return $return_array;
     });
 
 });
