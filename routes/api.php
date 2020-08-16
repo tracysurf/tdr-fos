@@ -279,7 +279,16 @@ Route::middleware('auth:sanctum')->group(function (){
             return $return_array;
         }
 
-        $liked = $request->get('liked') ? true : false;
+        $liked = $request->get('liked');
+
+        if( $liked === 'true' || $liked === true)
+        {
+            $liked = true;
+        }
+        else
+        {
+            $liked = false;
+        }
 
         $photo->favorite = $liked;
         $updated = $photo->save();
@@ -293,6 +302,10 @@ Route::middleware('auth:sanctum')->group(function (){
         $return_array['success']    = true;
 
         return $return_array;
+    });
+
+    Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/rotate', function(Request $request, $order_id, $photo_id){
+
     });
 
 });
