@@ -387,6 +387,21 @@ Route::middleware('auth:sanctum')->group(function (){
         return $return_array;
     });
 
+    Route::get('/notifications', function(Request $request){
+        $return_array = [
+            'message'   => '',
+            'success'   => false,
+            'data'      => null,
+        ];
+
+        $user   = $request->user();
+
+        $return_array['success']    = true;
+        $return_array['data']       = [];
+
+        return $return_array;
+    });
+
 });
 
 Route::post('/auth/signIn', function (Request $request) {
