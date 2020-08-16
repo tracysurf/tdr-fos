@@ -248,7 +248,7 @@ Route::middleware('auth:sanctum')->group(function (){
         return $return_array;
     });
 
-    Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}', function(Request $request, $order_id, $photo_id){
+    Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}', function(Request $request, $order_id, $roll_id, $photo_id){
         $return_array = [
             'message'   => '',
             'success'   => false,
