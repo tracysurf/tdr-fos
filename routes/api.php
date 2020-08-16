@@ -2,6 +2,7 @@
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
@@ -26,10 +27,10 @@ Route::middleware('auth:sanctum')->get('/albums', function(Request $request) {
 });
 
 Route::middleware('auth:sanctum')->group(function (){
-    Route::get('/albums', function(Request $request) {
-        $user = $request->user();
 
+    Route::get('/orders', function(Request $request) {
 
+        $user   = $request->user();
         $orders = App\Order::where('customer_id', $user->ID)->get();
 
         $return_array = [
@@ -72,6 +73,34 @@ Route::middleware('auth:sanctum')->group(function (){
 
         return $return_array;
     });
+
+    Route::get('/albums/{order_id}/rolls', function(Request $request, $order_id) {
+
+        $user   = $request->user();
+        $order  = App\Order::find($order_id);
+
+        $rolls  = \DB::table('photos')->where('order_id', $order_id)->select('roll')->orderBy('roll', 'asc')->distinct();
+
+        $photos = [];
+        foreach($rolls as $roll)
+        {
+            $roll_photos = App\Photo::where('order_id', $order_id)->where('roll', $roll)->orderBy('filename', 'asc')->get();
+
+            $photos[$roll] = $roll_photos;
+        }
+
+
+
+        if( ! $order)
+        {
+            return [
+                'message'   => 'Order not found',
+                'success'   => false
+            ];
+        }
+
+    });
+
 });
 
 Route::post('/auth/signIn', function (Request $request) {
@@ -89,5 +118,11 @@ Route::post('/auth/signIn', function (Request $request) {
         ]);
     }
 
-    return $user->createToken($request->device_name)->plainTextToken;
+    $token = $user->createToken($request->device_name)->plainTextToken;
+
+    return [
+        'message'   => '',
+        'success'   => true,
+        'data'      => $token
+    ];
 });
