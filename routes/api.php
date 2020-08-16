@@ -147,7 +147,7 @@ Route::middleware('auth:sanctum')->group(function (){
         $return_array = [
             'message'   => '',
             'success'   => false,
-            'data'      => []
+            'data'      => null,
         ];
 
         $user   = $request->user();
@@ -155,20 +155,51 @@ Route::middleware('auth:sanctum')->group(function (){
 
         if( $order->customer_id !== $user->ID)
         {
-            return [
-                'message'   => 'Order not found', // Purposefully obtuse here as to not confirm that the order exists
-                'success'   => false,
-            ];
+            // Purposefully being obtuse here as to not confirm existence of this order id
+            $return_array['message'] = 'Order not found';
+            return $return_array;
         }
 
         if( ! $order)
         {
-            return [
-                'message'   => 'Order not found',
-                'success'   => false
-            ];
+            $return_array['message'] = 'Order not found';
+            return $return_array;
         }
 
+        // Update the name if applicable
+        $name = $request->get('name');
+        if($order->name !== $name)
+        {
+            $order->name = $name;
+            $order->save();
+        }
+
+        // Check for updated rolls...
+        /*
+        if($request->has('updatedRolls'))
+        {
+            $updated_rolls = $request->get('updatedRolls');
+
+            foreach($updated_rolls as $updated_roll)
+            {
+                $updated_roll_id    = $updated_roll->id;
+                $updated_roll_name  = $updated_roll->name;
+
+                // Get all photos on this order with this roll ID and change the roll_name on them
+                $photos = \App\Photo::where('order_id', $order_id)->where('roll', $updated_roll_id)->get();
+                foreach($photos as $photo)
+                {
+                    $photo->roll_name = $updated_roll_name;
+                    $photo->save();
+                }
+            }
+        }
+        */
+
+        $return_array['data']       = 'successful update';
+        $return_array['success']    = true;
+
+        return $return_array;
     });
 
 });
