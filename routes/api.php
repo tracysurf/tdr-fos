@@ -183,9 +183,18 @@ Route::post('/auth/signIn', function (Request $request) {
     $user = User::where('user_email', $request->email)->first();
 
     if (! $user || ! Auth::validate(['email' => $request->email, 'password' => $request->password])) {
+
+        return [
+            'message'   => 'The username or password is incorrect.',
+            'success'   => false,
+            'data'      => null
+        ];
+
+        /*
         throw ValidationException::withMessages([
             'email' => ['The provided credentials are incorrect.'],
         ]);
+        */
     }
 
     $token = $user->createToken($request->device_name)->plainTextToken;
