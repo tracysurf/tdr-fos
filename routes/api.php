@@ -22,13 +22,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:sanctum')->get('/albums', function(Request $request) {
-
-});
-
 Route::middleware('auth:sanctum')->group(function (){
 
-    Route::get('/orders', function(Request $request) {
+    Route::get('/albums', function(Request $request) {
 
         $user   = $request->user();
         $orders = App\Order::where('customer_id', $user->ID)->get();
