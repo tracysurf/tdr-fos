@@ -343,6 +343,50 @@ Route::middleware('auth:sanctum')->group(function (){
         return $return_array;
     });
 
+    Route::delete('/albums/{order_id}/rolls/{roll_id}/images', function(Request $request, $order_id, $photo_id){
+        $return_array = [
+            'message'   => '',
+            'success'   => false,
+            'data'      => null,
+        ];
+
+        $user   = $request->user();
+        $order  = App\Order::find($order_id);
+
+        if( $order->customer_id !== $user->ID)
+        {
+            // Purposefully being obtuse here as to not confirm existence of this order id
+            $return_array['message'] = 'Order not found';
+            return $return_array;
+        }
+
+        if( ! $order)
+        {
+            $return_array['message'] = 'Order not found';
+            return $return_array;
+        }
+
+        $delete_image_ids = $request->get('imageIds');
+        foreach($delete_image_ids as $delete_image_id)
+        {
+            $photo = \App\Photo::where('order_id', $order_id)->where('id', $delete_image_id)->first();
+
+            if( ! $photo)
+            {
+                $return_array['message'] = 'Photo ('.$delete_image_id.') not found';
+                return $return_array;
+            }
+
+            // TODO: Delete here
+            // $photo->delete();
+        }
+
+        $return_array['data']       = 'updated';
+        $return_array['success']    = true;
+
+        return $return_array;
+    });
+
 });
 
 Route::post('/auth/signIn', function (Request $request) {
