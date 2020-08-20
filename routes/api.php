@@ -343,7 +343,7 @@ Route::middleware('auth:sanctum')->group(function (){
         return $return_array;
     });
 
-    Route::delete('/albums/{order_id}/rolls/{roll_id}/images', function(Request $request, $order_id, $photo_id){
+    Route::delete('/albums/{order_id}/rolls/{roll_id}/images', function(Request $request, $order_id){
         $return_array = [
             'message'   => '',
             'success'   => false,
