@@ -124,7 +124,8 @@ Route::middleware('auth:sanctum')->group(function (){
                 $roll_photos_return[] = [
                     'id'            => $roll_photo->id,
                     'image_urls'    => $image_urls,
-                    'liked'         => $roll_photo->favorite ? true : false
+                    'liked'         => $roll_photo->favorite ? true : false,
+                    'updated_at'    => $roll_photo->updated_at
                 ];
 
                 $roll_name = $roll_photo->roll_name;
