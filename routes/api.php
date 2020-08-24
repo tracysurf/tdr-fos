@@ -384,7 +384,6 @@ Route::middleware('auth:sanctum')->group(function (){
 
         $return_array['data']       = 'updated';
         $return_array['success']    = true;
-        $return_array['debug']      = $request->all();
 
         return $return_array;
     });
