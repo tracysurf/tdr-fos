@@ -37,7 +37,7 @@ Route::middleware('auth:sanctum')->group(function (){
         $data = [];
         foreach($orders as $order)
         {
-            $photos         = \App\Photo::where('order_id', $order->id)->get();
+            $photos         = \App\Photo::where('order_id', $order->id)->whereNull('deleted_at')->get();
             $rolls          = [];
             $thumbnail_url  = '';
 
@@ -50,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function (){
                         $rolls[$photo->roll] = 1;
                 }
 
-                $first_photo = \App\Photo::where('order_id', $order->id)->first();
+                $first_photo = \App\Photo::where('order_id', $order->id)->whereNull('deleted_at')->first();
 
                 $thumbnail_url = $first_photo->thumbnailURL('_md');
             }
@@ -108,7 +108,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
         foreach($rolls as $roll_id => $nothing)
         {
-            $roll_photos = App\Photo::where('order_id', $order_id)->where('roll', $roll_id)->orderBy('filename', 'asc')->get();
+            $roll_photos = App\Photo::where('order_id', $order_id)->whereNull('deleted_at')->where('roll', $roll_id)->orderBy('filename', 'asc')->get();
 
             $roll_photos_return = [];
 
