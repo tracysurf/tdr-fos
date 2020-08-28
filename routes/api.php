@@ -403,8 +403,9 @@ Route::middleware('auth:sanctum')->group(function (){
                 return $return_array;
             }
 
-            // TODO: Delete here
-            // $photo->delete();
+            // Delete
+            $photo->deleted_at = \Carbon\Carbon::now();
+            $photo->save();
         }
 
         $return_array['data']       = 'updated';
