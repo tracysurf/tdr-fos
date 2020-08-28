@@ -336,9 +336,34 @@ Route::middleware('auth:sanctum')->group(function (){
             return $return_array;
         }
 
-        // TODO: Rotate here
+        // Make request to FOS api to trigger the rotation
+        $url = getenv('FOS_API_URL').'/api/mobile/photo/'.$photo_id.'/rotate';
+        $response = \Http::post($url, [
+            'token' => getenv('FOS_API_TOKEN')
+        ]);
+
+        // Check for 5xx type response
+        if($response->failed() || $response->serverError())
+        {
+            $return_array['message'] = 'Unknown api error';
+
+            return $return_array;
+        }
+
+        // Check for a non-success response with error message
+        $response_array = $response->json();
+        if($response_array['success'] === false || $response_array['success'] === 'false')
+        {
+            $return_array['message'] = $response_array['message'];
+
+            return $return_array;
+        }
+
+        // Pull the thumbnail data off of the response to put into our response
+        $thumbnail_data = $response_array['data'];
 
         $return_array['data']       = 'updated';
+        $return_array['thumbnail']  = $thumbnail_data;
         $return_array['success']    = true;
 
         return $return_array;
