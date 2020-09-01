@@ -20,7 +20,7 @@ class APIOrderController extends Controller
     public function index(Request $request)
     {
         $user   = $request->user();
-        $orders = \App\Order::where('customer_id', $user->ID)->get();
+        $orders = \App\Order::where('customer_id', $user->ID)->orderBy('created_at', 'desc')->get();
 
         $return_array = [
             'message'   => '',
