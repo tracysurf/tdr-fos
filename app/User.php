@@ -19,4 +19,33 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends CorcelAuthenticatable
 {
     use Notifiable, HasApiTokens;
+
+    /**
+     * @return bool
+     */
+    public function hasSMSEnabled()
+    {
+        $value = \DB::connection('wordpress')
+            ->table('usermeta')
+            ->where('user_id', $this->ID)
+            ->where('meta_key', 'billing_sms_notification')
+            ->first();
+
+        // The value is stored as a boolean string, so if it's === '1' then it's true, otherwise it's false.
+        return $value->meta_value === '1';
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        $value = \DB::connection('wordpress')
+            ->table('usermeta')
+            ->where('user_id', $this->ID)
+            ->where('meta_key', 'billing_mobile_phone')
+            ->first();
+
+        return $value->meta_value;
+    }
 }

@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::get('/notifications',                        '\App\Http\Controllers\API\V1\NotificationController@index');
 
+    Route::get('/profile',                              '\App\Http\Controllers\API\V1\UserController@show');
+
     Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}',          '\App\Http\Controllers\API\V1\PhotoController@update');
     Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/rotate',   '\App\Http\Controllers\API\V1\PhotoController@rotate');
 
