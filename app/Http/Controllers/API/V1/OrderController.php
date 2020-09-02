@@ -47,16 +47,16 @@ class OrderController extends Controller
                 $first_photo = \App\Photo::where('order_id', $order->id)->whereNull('deleted_at')->first();
 
                 $thumbnail_url = $first_photo->thumbnailURL('_md');
-            }
 
-            $data[] = [
-                'id'            => $order->id,
-                'name'          => $order->name,
-                'filmsCount'    => count($rolls),
-                'imagesCount'   => $photos->count(),
-                'date'          => $order->created_at->format('M j'),
-                'imageUrl'      => $thumbnail_url,
-            ];
+                $data[] = [
+                    'id'            => $order->id,
+                    'name'          => $order->name,
+                    'filmsCount'    => count($rolls),
+                    'imagesCount'   => $photos->count(),
+                    'date'          => $order->created_at->format('M j'),
+                    'imageUrl'      => $thumbnail_url,
+                ];
+            }
         }
 
         $return_array['data'] = $data;
