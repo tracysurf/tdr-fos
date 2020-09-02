@@ -40,6 +40,26 @@ class User extends CorcelAuthenticatable
     }
 
     /**
+     * @param $value
+     * @return bool
+     */
+    public function updateSMSEnabled($value)
+    {
+        if($value === 'true' || $value === true || $value === 1 | $value === '1')
+            $value = 1;
+        else
+            $value = 0;
+
+        $update = \DB::connection('wordpress')
+            ->table('usermeta')
+            ->where('user_id', $this->ID)
+            ->where('meta_key', 'billing_sms_notification')
+            ->update(['meta_value' => $value]);
+
+        return true;
+    }
+
+    /**
      * @return string
      */
     public function getPhoneNumber()
@@ -55,6 +75,21 @@ class User extends CorcelAuthenticatable
             $phone = $value->meta_value;
 
         return $phone;
+    }
+
+    /**
+     * @param $phone_number
+     * @return mixed
+     */
+    public function updatePhoneNumber($phone_number)
+    {
+        $update = \DB::connection('wordpress')
+            ->table('usermeta')
+            ->where('user_id', $this->ID)
+            ->where('meta_key', 'billing_mobile_phone')
+            ->update(['meta_value' => $phone_number]);
+
+        return $update;
     }
 
     /**
