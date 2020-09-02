@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\V1;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 /**
- * Class APIOrderController
+ * Class OrderController
  * @package App\Http\Controllers
  */
-class APIOrderController extends Controller
+class OrderController extends Controller
 {
 
     /**

@@ -24,19 +24,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function (){
 
-    Route::get('/albums',                               '\App\Http\Controllers\APIOrderController@index');
-    Route::put('/albums/{order_id}',                    '\App\Http\Controllers\APIOrderController@update');
+    Route::get('/albums',                               '\App\Http\Controllers\API\V1\OrderController@index');
+    Route::put('/albums/{order_id}',                    '\App\Http\Controllers\API\V1\OrderController@update');
 
-    Route::get('/albums/{order_id}/rolls',              '\App\Http\Controllers\APIRollController@index');
-    Route::put('/albums/{order_id}/rolls/{roll_id}',    '\App\Http\Controllers\APIRollController@update');
+    Route::get('/albums/{order_id}/rolls',              '\App\Http\Controllers\API\V1\RollController@index');
+    Route::put('/albums/{order_id}/rolls/{roll_id}',    '\App\Http\Controllers\API\V1\RollController@update');
 
-    Route::get('/notifications',                        '\App\Http\Controllers\APINotificationController@index');
+    Route::get('/notifications',                        '\App\Http\Controllers\API\V1\NotificationController@index');
 
-    Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}',          '\App\Http\Controllers\APIPhotoController@update');
-    Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/rotate',   '\App\Http\Controllers\APIPhotoController@rotate');
+    Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}',          '\App\Http\Controllers\API\V1\PhotoController@update');
+    Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/rotate',   '\App\Http\Controllers\API\V1\PhotoController@rotate');
 
-    Route::delete('/albums/{order_id}/rolls/{roll_id}/images',                  '\App\Http\Controllers\APIPhotoController@delete');
-    
+    Route::delete('/albums/{order_id}/rolls/{roll_id}/images',                  '\App\Http\Controllers\API\V1\PhotoController@delete');
+
 });
 
-Route::post('/auth/signIn', '\App\Http\Controllers\APIAuthController@signIn');
+Route::post('/auth/signIn', '\App\Http\Controllers\API\V1\AuthController@signIn');

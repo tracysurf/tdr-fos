@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\V1;
 
-use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 /**
- * Class APIAuthController
+ * Class AuthController
  * @package App\Http\Controllers
  */
-class APIAuthController extends Controller
+class AuthController extends Controller
 {
 
     /**

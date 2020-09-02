@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\V1;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 /**
- * Class APINotificationController
+ * Class NotificationController
  * @package App\Http\Controllers
  */
-class APINotificationController extends Controller
+class NotificationController extends Controller
 {
 
     /**
