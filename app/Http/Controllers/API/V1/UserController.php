@@ -35,15 +35,11 @@ class UserController extends Controller
         // Determine if user has SMS enabled
         $sms_enabled    = $user->hasSMSEnabled();
 
-        // Determine the device name from our auth/bearer token
-        $token          = \DB::connection('wordpress')
-                            ->table('personal_access_tokens')
-                            ->where('token', $request->bearerToken())
-                            ->first();
-        $device_name    = $token->name;
+        // Get user's push notifications token
+        $push_token     = $user->getPushNotificationToken($request->bearerToken());
 
         $return_array['data'] = [
-            'notificationsToken'    => $device_name,
+            'notificationsToken'    => $push_token,
             'smsEnabled'            => $sms_enabled,
             'phoneNumber'           => $phone_number
         ];

@@ -31,8 +31,12 @@ class User extends CorcelAuthenticatable
             ->where('meta_key', 'billing_sms_notification')
             ->first();
 
-        // The value is stored as a boolean string, so if it's === '1' then it's true, otherwise it's false.
-        return $value->meta_value === '1';
+        $sms_enabled = false;
+        if($value)
+            // The value is stored as a boolean string, so if it's === '1' then it's true, otherwise it's false.
+            $sms_enabled = $value->meta_value === '1';
+
+        return $sms_enabled;
     }
 
     /**
@@ -46,6 +50,33 @@ class User extends CorcelAuthenticatable
             ->where('meta_key', 'billing_mobile_phone')
             ->first();
 
-        return $value->meta_value;
+        $phone = '';
+        if($value)
+            $phone = $value->meta_value;
+
+        return $phone;
+    }
+
+    /**
+     * @param $bearer_token
+     * @return string
+     */
+    public function getPushNotificationToken($bearer_token)
+    {
+        $bearer_token       = explode('|', $bearer_token);
+        $bearer_token_id    = $bearer_token[0]; // Our token id for this token
+
+        $device_name = '';
+        foreach($this->tokens as $token)
+        {
+            if((int)$token->id === (int)$bearer_token_id)
+            {
+                $device_name = $token->name;
+            }
+        }
+
+        // TODO: Link this device name + user_id up on another table that stores the firebase/push notifications tokens
+
+        return $device_name;
     }
 }
