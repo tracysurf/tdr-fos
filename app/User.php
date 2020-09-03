@@ -98,6 +98,57 @@ class User extends CorcelAuthenticatable
      */
     public function getPushNotificationToken($bearer_token)
     {
+        $device_name = $this->getDeviceNameFromBearerToken($bearer_token);
+
+        $token = PushNotificationToken::where('customer_id', $this->ID)->where('device_name', $device_name)->first();
+
+        if( ! $token)
+            $push_token = '';
+        else
+            $push_token = $token->token;
+
+        return $push_token;
+    }
+
+    /**
+     * @param $bearer_token
+     * @param $push_token
+     * @return mixed
+     */
+    public function updatePushNotificationToken($bearer_token, $push_token)
+    {
+        $device_name = $this->getDeviceNameFromBearerToken($bearer_token);
+
+        // Is there an existing token?
+        $token = PushNotificationToken::where('customer_id', $this->ID)
+            ->where('device_name', $device_name)
+            ->first();
+
+        // Existing token stored for this device, let's update it
+        if($token)
+        {
+            $token->token = $push_token;
+            $token->save();
+        }
+        else
+        {
+            // There's no token stored for this device yet, let's store one
+            $token              = new PushNotificationToken();
+            $token->customer_id = $this->ID;
+            $token->device_name = $device_name;
+            $token->token       = $push_token;
+            $token->save();
+        }
+
+        return $token->token;
+    }
+
+    /**
+     * @param $bearer_token
+     * @return string
+     */
+    public function getDeviceNameFromBearerToken($bearer_token)
+    {
         $bearer_token       = explode('|', $bearer_token);
         $bearer_token_id    = $bearer_token[0]; // Our token id for this token
 
@@ -109,8 +160,6 @@ class User extends CorcelAuthenticatable
                 $device_name = $token->name;
             }
         }
-
-        // TODO: Link this device name + user_id up on another table that stores the firebase/push notifications tokens
 
         return $device_name;
     }

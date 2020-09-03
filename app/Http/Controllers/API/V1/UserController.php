@@ -71,29 +71,34 @@ class UserController extends Controller
             return $return_array;
         }
 
+        // Check for a new notifications token
         $notifications_token = null;
         if($request->has('notificationsToken'))
         {
             $notifications_token = $request->get('notificationsToken');
         }
 
+        // Check for an updated sms enable flag
         $sms_enabled = null;
         if($request->has('smsEnabled'))
         {
             $sms_enabled = $request->get('smsEnabled');
         }
 
+        // Check for an updated phone number
         $phone_number = null;
         if($request->has('phoneNumber'))
         {
             $phone_number = $request->get('phoneNumber');
         }
 
+        // If we've got an sms enabled flag let's update
         if( ! is_null($sms_enabled))
         {
             $user->updateSMSEnabled($sms_enabled);
         }
 
+        // If we've got an updated phone number let's update
         if( ! is_null($phone_number))
         {
             // Validate the phone number (Propaganistas/Laravel-Phone package)
@@ -110,6 +115,12 @@ class UserController extends Controller
             }
 
             $user->updatePhoneNumber($phone_number);
+        }
+
+        // If we've got an updated notifications token let's update
+        if( ! is_null($notifications_token))
+        {
+            $user->updatePushNotificationToken($request->bearerToken(), $notifications_token);
         }
 
         $return_array['success']    = true;
