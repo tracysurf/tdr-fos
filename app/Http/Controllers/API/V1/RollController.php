@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Download;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -57,10 +58,27 @@ class RollController extends Controller
 
         foreach($rolls as $roll_id => $nothing)
         {
-            $roll_photos = \App\Photo::where('order_id', $order_id)->whereNull('deleted_at')->where('roll', $roll_id)->orderBy('filename', 'asc')->get();
+            $roll_photos = \App\Photo::where('order_id', $order_id)
+                ->whereNull('deleted_at')
+                ->where('roll', $roll_id)
+                ->orderBy('filename', 'asc')
+                ->get();
 
+            $roll_download = Download::where('order_id', $order_id)
+                ->where('roll', $roll_id)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            // Format Downloads for response
+            $roll_download_return = [
+                'downloadId'    => $roll_download->id,
+                'orderId'       => $roll_download->order_id,
+                'rollId'        => $roll_download->roll,
+                'downloadURL'   => $roll_download->url
+            ];
+
+            // Format Photos for response
             $roll_photos_return = [];
-
             foreach($roll_photos as $roll_photo)
             {
                 $image_urls = [
@@ -81,9 +99,10 @@ class RollController extends Controller
             }
 
             $return_array['data'][] = [
-                'id'    => $roll_id,
-                'name'  => $roll_name,
-                'images'=> $roll_photos_return
+                'id'        => $roll_id,
+                'name'      => $roll_name,
+                'images'    => $roll_photos_return,
+                'download'  => $roll_download_return
             ];
         }
 
