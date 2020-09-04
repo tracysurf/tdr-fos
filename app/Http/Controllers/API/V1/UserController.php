@@ -42,7 +42,8 @@ class UserController extends Controller
         $return_array['data'] = [
             'notificationsToken'    => $push_token,
             'smsEnabled'            => $sms_enabled,
-            'phoneNumber'           => $phone_number
+            'phoneNumber'           => $phone_number,
+            'email'                 => $user->user_email,
         ];
 
         $return_array['success'] = true;
