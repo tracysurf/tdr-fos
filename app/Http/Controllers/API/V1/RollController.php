@@ -70,7 +70,7 @@ class RollController extends Controller
                 ->first();
 
             $roll_download_return = null;
-            if( ! $roll_download)
+            if($roll_download)
             {
                 // Format Downloads for response
                 $roll_download_return = [
