@@ -69,16 +69,21 @@ class RollController extends Controller
                 ->orderBy('id', 'desc')
                 ->first();
 
-            // Format Downloads for response
-            $roll_download_return = [
-                'downloadId'    => $roll_download->id,
-                'orderId'       => $roll_download->order_id,
-                'rollId'        => $roll_download->roll,
-                'downloadURL'   => $roll_download->url
-            ];
+            $roll_download_return = null;
+            if( ! $roll_download)
+            {
+                // Format Downloads for response
+                $roll_download_return = [
+                    'downloadId'    => $roll_download->id,
+                    'orderId'       => $roll_download->order_id,
+                    'rollId'        => $roll_download->roll,
+                    'downloadURL'   => $roll_download->url
+                ];
+            }
 
             // Format Photos for response
             $roll_photos_return = [];
+            $roll_name          = '';
             foreach($roll_photos as $roll_photo)
             {
                 $image_urls = [
