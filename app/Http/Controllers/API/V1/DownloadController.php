@@ -38,7 +38,8 @@ class DownloadController extends Controller
                 'downloadId'    => $download->id,
                 'orderId'       => $download->order_id,
                 'rollId'        => $download->roll,
-                'downloadURL'   => $download->url
+                'downloadURL'   => $download->url,
+                'failed'        => $download->failed ? true : false,
             ];
         }
 

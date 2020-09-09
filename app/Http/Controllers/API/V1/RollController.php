@@ -77,7 +77,8 @@ class RollController extends Controller
                     'downloadId'    => $roll_download->id,
                     'orderId'       => $roll_download->order_id,
                     'rollId'        => $roll_download->roll,
-                    'downloadURL'   => $roll_download->url
+                    'downloadURL'   => $roll_download->url,
+                    'failed'        => $roll_download->failed ? true : false,
                 ];
             }
 
