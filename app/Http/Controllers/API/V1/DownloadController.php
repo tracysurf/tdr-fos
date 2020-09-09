@@ -40,6 +40,7 @@ class DownloadController extends Controller
                 'rollId'        => $download->roll,
                 'downloadURL'   => $download->url,
                 'failed'        => $download->failed ? true : false,
+                'date'          => $download->created_at->format('n/j/Y')
             ];
         }
 
