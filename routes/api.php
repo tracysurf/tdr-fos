@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::put('/albums/{order_id}/rolls/{roll_id}',    '\App\Http\Controllers\API\V1\RollController@update');
 
     Route::get('/notifications',                        '\App\Http\Controllers\API\V1\NotificationController@index');
+    Route::put('/notifications',                        '\App\Http\Controllers\API\V1\NotificationController@update');
 
     Route::get('/downloads',                                    '\App\Http\Controllers\API\V1\DownloadController@index');
     Route::put('/downloads',                                    '\App\Http\Controllers\API\V1\DownloadController@update');
