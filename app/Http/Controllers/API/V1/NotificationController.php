@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Notification;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -25,7 +27,7 @@ class NotificationController extends Controller
         ];
 
         $user           = $request->user();
-        $notifications  = $user->notifications()->orderBy('id', 'desc')->take(50)->get();
+        $notifications  = Notification::where('customer_id', $user->ID)->orderBy('id', 'desc')->take(50)->get();
 
         $notifications_return = [];
         foreach($notifications as $notification)
