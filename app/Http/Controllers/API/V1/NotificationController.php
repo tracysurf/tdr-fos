@@ -35,8 +35,8 @@ class NotificationController extends Controller
             $notifications_return[] = [
                 'id'        => $notification->id,
                 'text'      => $notification->body,
-                'date'      => $notification->created_at->format('n/j/Y'),
-                'seenAt'    => is_null($notification->seen_at) ? $notification->seen_at : $notification->seen_at->format('n/j/Y'),
+                'date'      => $notification->created_at,
+                'seenAt'    => $notification->seen_at,
                 'albumId'   => $notification->order_id,
                 'downloadId'=> $notification->download_id,
             ];
