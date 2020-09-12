@@ -32,7 +32,8 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::get('/notifications',                        '\App\Http\Controllers\API\V1\NotificationController@index');
 
-    Route::get('/downloads',                            '\App\Http\Controllers\API\V1\DownloadController@index');
+    Route::get('/downloads',                                    '\App\Http\Controllers\API\V1\DownloadController@index');
+    Route::put('/albums/{order_id}/rolls/{roll_id}/download',   '\App\Http\Controllers\API\V1\DownloadController@create');
 
     Route::get('/profile',                              '\App\Http\Controllers\API\V1\UserController@show');
     Route::put('/profile',                              '\App\Http\Controllers\API\V1\UserController@update');
