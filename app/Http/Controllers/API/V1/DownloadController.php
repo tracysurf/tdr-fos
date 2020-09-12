@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Download;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
@@ -132,6 +133,44 @@ class DownloadController extends Controller
 
         $return_array['success']    = true;
         $return_array['data']       = 'successful update';
+
+        return $return_array;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function update(Request $request)
+    {
+        $return_array = [
+            'message'   => '',
+            'success'   => false,
+            'data'      => null,
+        ];
+
+        $user           = $request->user();
+        $download_ids   = $request->get('downloadIds');
+
+        foreach($download_ids as $download_id)
+        {
+            // Confirm that the download's submitted here belong to the user
+            $download = Download::where('customer_id', $user->ID)
+                            ->where('id', $download_id)
+                            ->first();
+            if( ! $download)
+            {
+                $return_array['message'] = 'Download not found';
+
+                return $return_array;
+            }
+
+            $download->seen_at = Carbon::now();
+            $download->save();
+        }
+
+        $return_array['success']    = true;
+        $return_array['data']       = 'updated';
 
         return $return_array;
     }
