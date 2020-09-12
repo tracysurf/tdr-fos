@@ -79,7 +79,8 @@ class RollController extends Controller
                     'rollId'        => $roll_download->roll,
                     'downloadURL'   => $roll_download->url,
                     'failed'        => $roll_download->failed ? true : false,
-                    'date'          => $roll_download->created_at->format('n/j/Y')
+                    'date'          => $roll_download->created_at,
+                    'seenAt'        => $roll_download->seen_at
                 ];
             }
 
