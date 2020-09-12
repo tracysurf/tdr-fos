@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Download;
+use App\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -98,6 +99,22 @@ class DownloadController extends Controller
         if($pending_download)
         {
             $return_array['message'] = 'Download for this roll is already pending.';
+
+            return $return_array;
+        }
+
+        // Check for multiple failed download attempts and return a response
+        $failed_downloads = Download::where('customer_id', $user->ID)
+            ->where('order_id', $order_id)
+            ->where('roll', $roll_id)
+            ->where('failed', 1)
+            ->count();
+        if($failed_downloads > 2)
+        {
+            $order = Order::find($order_id);
+            $woo_id = $order->woo_id;
+
+            $return_array['message'] = "There's been a problem creating your download, please contact support. Order: ".$woo_id." Roll: ".$roll_id;
 
             return $return_array;
         }
