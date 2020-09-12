@@ -24,10 +24,24 @@ class NotificationController extends Controller
             'data'      => null,
         ];
 
-        $user   = $request->user();
+        $user           = $request->user();
+        $notifications  = $user->notifications()->orderBy('id', 'desc')->take(50)->get();
+
+        $notifications_return = [];
+        foreach($notifications as $notification)
+        {
+            $notifications_return[] = [
+                'id'        => $notification->id,
+                'text'      => $notification->body,
+                'date'      => $notification->created_at->format('n/j/Y'),
+                'seenAt'    => is_null($notification->seen_at) ? $notification->seen_at : $notification->seen_at->format('n/j/Y'),
+                'albumId'   => $notification->order_id,
+                'downloadId'=> $notification->download_id,
+            ];
+        }
 
         $return_array['success']    = true;
-        $return_array['data']       = [];
+        $return_array['data']       = $notifications_return;
 
         return $return_array;
     }

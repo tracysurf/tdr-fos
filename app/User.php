@@ -21,6 +21,14 @@ class User extends CorcelAuthenticatable
     use Notifiable, HasApiTokens;
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
      * @return bool
      */
     public function hasSMSEnabled()
