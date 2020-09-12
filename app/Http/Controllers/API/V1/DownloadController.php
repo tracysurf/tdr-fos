@@ -42,6 +42,7 @@ class DownloadController extends Controller
                 'rollId'        => $download->roll,
                 'downloadURL'   => $download->url,
                 'failed'        => $download->failed ? true : false,
+                'failedMessage' => $download->failed_message,
                 'seenAt'        => $download->seen_at,
                 'date'          => $download->created_at
             ];
