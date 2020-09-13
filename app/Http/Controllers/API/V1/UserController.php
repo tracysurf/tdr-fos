@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
 
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function show(Request $request)
     {
         $return_array = [
@@ -37,7 +41,7 @@ class UserController extends Controller
         $sms_enabled    = $user->hasSMSEnabled();
 
         // Get user's push notifications token
-        $push_token     = $user->getPushNotificationToken($request->bearerToken());
+        $push_token     = $user->getDevicePushNotificationTokenFromBearer($request->bearerToken());
 
         $return_array['data'] = [
             'notificationsToken'    => $push_token,

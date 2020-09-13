@@ -49,3 +49,7 @@ Route::middleware('auth:sanctum')->group(function (){
 });
 
 Route::post('/auth/signIn', '\App\Http\Controllers\API\V1\AuthController@signIn');
+
+Route::middleware('privateapiauth')->group(function(){
+    Route::post('/push-notification', '\App\Http\Controllers\API\V1\PushNotificationController@create');
+});

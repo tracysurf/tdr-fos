@@ -2,10 +2,13 @@
 
 namespace App;
 
+use Exception;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 //use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Corcel\Model\User as CorcelAuthenticatable;
+use Kreait\Firebase\Exception\Messaging\InvalidMessage;
+use Kreait\Firebase\Messaging\CloudMessage;
 use Laravel\Sanctum\HasApiTokens;
 
 // We're extending the Corce\Model\User here because it's properly connected to the wordpress database for the purposes
@@ -101,10 +104,91 @@ class User extends CorcelAuthenticatable
     }
 
     /**
+     * @param $title
+     * @param $body
+     * @param array $data_array
+     * @param null $image_url
+     * @return array
+     * @throws Exception
+     */
+    public function sendPushNotification($title, $body, $data_array = [], $image_url = null)
+    {
+        // Get device tokens for this user
+        $device_tokens  = $this->getPushNotificationTokens();
+
+        // Configure the notification object
+        $notification   = \Kreait\Firebase\Messaging\Notification::create(
+            $title,
+            $body,
+            $image_url);
+
+        // Associate any data with the notification
+        $push_data      = $data_array;
+
+        // Initiate the messaging object
+        $messaging = app('firebase.messaging');
+
+        // Loop through each token to send the notification
+        $messages = [];
+        foreach($device_tokens as $device_token)
+        {
+            // Create the message object
+            $message = CloudMessage::withTarget('token', $device_token)
+                ->withNotification($notification)
+                ->withData($push_data);
+
+            // Put it in a bucket to send later
+            $messages[] = $message;
+        }
+
+        // Loop through the bucket of messages to validate and send
+        $sent_messages = [];
+        foreach($messages as $message)
+        {
+            // Validate the message
+            try{
+                $messaging->validate($message);
+            } catch (InvalidMessage $e)
+            {
+                throw $e;
+            }
+
+            // Send the message
+            try {
+                $response = $messaging->send($message);
+
+                if(isset($response['name']))
+                {
+                    $sent_messages[] = $response['name'];
+                }
+
+            } catch (Exception $e)
+            {
+                throw $e;
+            }
+        }
+
+        return $sent_messages;
+    }
+
+    /**
+     * Get all push notification device tokens for this customer
+     *
+     * @return mixed
+     */
+    public function getPushNotificationTokens()
+    {
+        return PushNotificationToken::where('customer_id', $this->ID)->get();
+    }
+
+    /**
+     * Get the specific push notification token associated with a specific device name from the bearer token
+     * (The device_name is associated to the bearer token)
+     *
      * @param $bearer_token
      * @return string
      */
-    public function getPushNotificationToken($bearer_token)
+    public function getDevicePushNotificationTokenFromBearer($bearer_token)
     {
         $device_name = $this->getDeviceNameFromBearerToken($bearer_token);
 
