@@ -71,6 +71,17 @@ class DownloadController extends Controller
 
         $user   = $request->user();
 
+        // Check that this order belongs to this customer
+        $check_ownership = Order::where('customer_id', $user->ID)
+                                ->where('id', $order_id)
+                                ->first();
+        if( ! $check_ownership)
+        {
+            $return_array['You don\'t have access to this Album.'];
+
+            return $return_array;
+        }
+
         // Check for any existing download record for this object that hasn't failed/succeeded
         $existing_download = Download::where('customer_id', $user->ID)
                                 ->where('order_id', $order_id)
