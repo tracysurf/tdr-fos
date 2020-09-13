@@ -13,3 +13,6 @@ yarn-error.log
 
 # JetBrains IDE files
 .idea/*
+
+# Firebase credentials
+firebase_credentials.json
