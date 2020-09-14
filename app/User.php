@@ -178,7 +178,13 @@ class User extends CorcelAuthenticatable
      */
     public function getPushNotificationTokens()
     {
-        return PushNotificationToken::where('customer_id', $this->ID)->get();
+        $tokens = [];
+        foreach(PushNotificationToken::where('customer_id', $this->ID)->get() as $token)
+        {
+            $tokens[] = $token->token;
+        }
+
+        return $tokens;
     }
 
     /**
