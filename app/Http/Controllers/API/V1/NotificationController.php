@@ -70,6 +70,7 @@ class NotificationController extends Controller
         ];
 
         $user               = $request->user();
+        /*
         $notification_ids   = $request->get('notificationIds');
 
         foreach($notification_ids as $notification_id)
@@ -85,6 +86,19 @@ class NotificationController extends Controller
                 return $return_array;
             }
 
+            $notification->seen_at = Carbon::now();
+            $notification->save();
+        }
+        */
+
+        // Get all notifications not marked as seen
+        $notifications = Notification::where('customer_id', $user->ID)
+                            ->whereNull('seen_at')
+                            ->get();
+
+        // Mark them all seen
+        foreach($notifications as $notification)
+        {
             $notification->seen_at = Carbon::now();
             $notification->save();
         }
