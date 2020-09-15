@@ -131,7 +131,7 @@ class User extends CorcelAuthenticatable
 
         // Get count of non-seen notifications
         $notification_count = Notification::where('customer_id', $this->ID)
-            ->whereNotNull('seen_at')
+            ->whereNull('seen_at')
             ->count();
 
         // Attach the android specific badge count

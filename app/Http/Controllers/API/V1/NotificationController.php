@@ -47,7 +47,7 @@ class NotificationController extends Controller
 
         // Get count of non-seen notifications
         $unseen_count = Notification::where('customer_id', $user->ID)
-                        ->whereNotNull('seen_at')
+                        ->whereNull('seen_at')
                         ->count();
 
         $return_array['success']    = true;
