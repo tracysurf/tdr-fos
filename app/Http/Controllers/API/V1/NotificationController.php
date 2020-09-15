@@ -75,6 +75,8 @@ class NotificationController extends Controller
                         ->whereNull('seen_at')
                         ->count();
 
+        $return_array['success'] = true;
+
         return $return_array;
     }
 
