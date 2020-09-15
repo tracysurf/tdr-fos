@@ -46,7 +46,7 @@ class OrderController extends Controller
 
                 $first_photo = \App\Photo::where('order_id', $order->id)->whereNull('deleted_at')->first();
 
-                $thumbnail_url = $first_photo->thumbnailURL('_md');
+                $thumbnail_url = $first_photo->thumbnailURL('_lg');
 
                 $data[] = [
                     'id'            => $order->id,
