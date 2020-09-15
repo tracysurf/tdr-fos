@@ -61,6 +61,27 @@ class NotificationController extends Controller
      * @param Request $request
      * @return array
      */
+    public function unseen(Request $request)
+    {
+        $return_array = [
+            'message'   => '',
+            'success'   => false,
+            'data'      => null,
+        ];
+
+        $user           = $request->user();
+
+        $return_array['data'] = Notification::where('customer_id', $user->ID)
+                        ->whereNull('seen_at')
+                        ->count();
+
+        return $return_array;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function update(Request $request)
     {
         $return_array = [
@@ -70,7 +91,11 @@ class NotificationController extends Controller
         ];
 
         $user               = $request->user();
+
         /*
+         * Previous method included marking specific id's as seen, we've since changed to 'all' as
+         * seen when the endpoint is called, leaving this here in case we go back.
+         *
         $notification_ids   = $request->get('notificationIds');
 
         foreach($notification_ids as $notification_id)
