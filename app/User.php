@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Corcel\Model\User as CorcelAuthenticatable;
 use Kreait\Firebase\Exception\Messaging\InvalidMessage;
+use Kreait\Firebase\Messaging\ApnsConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -128,14 +129,36 @@ class User extends CorcelAuthenticatable
         // Initiate the messaging object
         $messaging = app('firebase.messaging');
 
+        // Get count of non-seen notifications
+        $notification_count = Notification::where('customer_id', $this->ID)
+            ->whereNotNull('seen_at')
+            ->count();
+
+        // Attach the android specific badge count
+        $push_data['badge'] = $notification_count;
+
         // Loop through each token to send the notification
         $messages = [];
         foreach($device_tokens as $device_token)
         {
+            // Setup this APNS config specifically to include the badge value
+            $apns = ApnsConfig::fromArray([
+                'payload' => [
+                    'aps' => [
+                        'alert' => [
+                            'title' => $title,
+                            'body'  => $body
+                        ],
+                        'badge' => $notification_count
+                    ]
+                ]
+            ]);
+
             // Create the message object
             $message = CloudMessage::withTarget('token', $device_token)
                 ->withNotification($notification)
-                ->withData($push_data);
+                ->withData($push_data)
+                ->withApnsConfig($apns);
 
             // Put it in a bucket to send later
             $messages[] = $message;

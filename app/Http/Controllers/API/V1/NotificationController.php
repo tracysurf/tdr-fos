@@ -27,7 +27,10 @@ class NotificationController extends Controller
         ];
 
         $user           = $request->user();
-        $notifications  = Notification::where('customer_id', $user->ID)->orderBy('id', 'desc')->take(50)->get();
+        $notifications  = Notification::where('customer_id', $user->ID)
+                        ->orderBy('id', 'desc')
+                        ->take(50)
+                        ->get();
 
         $notifications_return = [];
         foreach($notifications as $notification)
@@ -42,8 +45,14 @@ class NotificationController extends Controller
             ];
         }
 
+        // Get count of non-seen notifications
+        $unseen_count = Notification::where('customer_id', $user->ID)
+                        ->whereNotNull('seen_at')
+                        ->count();
+
         $return_array['success']    = true;
         $return_array['data']       = $notifications_return;
+        $return_array['badge']      = $unseen_count;
 
         return $return_array;
     }
