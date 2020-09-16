@@ -22,6 +22,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::prefix('v1')->group(function() {
+    Route::get('test', function(){
+        echo 'Route prefix test';
+    });
+});
+
 Route::middleware('auth:sanctum')->group(function (){
 
     Route::get('/albums',                               '\App\Http\Controllers\API\V1\OrderController@index');
