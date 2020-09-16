@@ -159,23 +159,34 @@ class User extends CorcelAuthenticatable
                 ->withNotification($notification)
                 ->withData($push_data)
                 ->withApnsConfig($apns);
+            
+            // Validate the message
+            $validated = false;
+            try{
+                $messaging->validate($message);
 
-            // Put it in a bucket to send later
-            $messages[] = $message;
+                $validated = true;
+            } catch (InvalidMessage $e)
+            {
+                // Flag the error for this token
+                $push_notification_token = PushNotificationToken::where('customer_id', $this->ID)->where('token', $device_token)->first();
+                if($push_notification_token)
+                {
+                    $push_notification_token->addError($e->getMessage());
+                }
+            }
+
+            if($validated)
+            {
+                // Put it in a bucket to send later
+                $messages[] = $message;
+            }
         }
 
         // Loop through the bucket of messages to validate and send
         $sent_messages = [];
         foreach($messages as $message)
         {
-            // Validate the message
-            try{
-                $messaging->validate($message);
-            } catch (InvalidMessage $e)
-            {
-                throw $e;
-            }
-
             // Send the message
             try {
                 $response = $messaging->send($message);
