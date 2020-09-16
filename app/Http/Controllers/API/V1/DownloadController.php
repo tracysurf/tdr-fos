@@ -77,7 +77,7 @@ class DownloadController extends Controller
                                 ->first();
         if( ! $check_ownership)
         {
-            $return_array['You don\'t have access to this Album.'];
+            $return_array['message'] = 'You don\'t have access to this Album.';
 
             return $return_array;
         }
