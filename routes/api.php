@@ -19,40 +19,42 @@ use Illuminate\Validation\ValidationException;
 */
 
 // V1 API routes
-Route::prefix('v1')->group(function() {
+Route::prefix('v1')->namespace('API\\V1')->group(function() {
 
     // Auth required routes
     Route::middleware('auth:sanctum')->group(function (){
 
-        Route::get('/albums',                               '\App\Http\Controllers\API\V1\OrderController@index');
-        Route::put('/albums/{order_id}',                    '\App\Http\Controllers\API\V1\OrderController@update');
+        Route::get('/albums',                               'OrderController@index');
+        Route::put('/albums/{order_id}',                    'OrderController@update');
 
-        Route::get('/albums/{order_id}/rolls',              '\App\Http\Controllers\API\V1\RollController@index');
-        Route::put('/albums/{order_id}/rolls/{roll_id}',    '\App\Http\Controllers\API\V1\RollController@update');
+        Route::get('/albums/{order_id}/rolls',              'RollController@index');
+        Route::put('/albums/{order_id}/rolls/{roll_id}',    'RollController@update');
 
-        Route::get('/notifications',                        '\App\Http\Controllers\API\V1\NotificationController@index');
-        Route::get('/notifications/unseen',                 '\App\Http\Controllers\API\V1\NotificationController@unseen');
-        Route::put('/notifications',                        '\App\Http\Controllers\API\V1\NotificationController@update');
+        Route::get('/notifications',                        'NotificationController@index');
+        Route::get('/notifications/unseen',                 'NotificationController@unseen');
+        Route::put('/notifications',                        'NotificationController@update');
 
-        Route::get('/downloads',                                    '\App\Http\Controllers\API\V1\DownloadController@index');
-        Route::put('/downloads',                                    '\App\Http\Controllers\API\V1\DownloadController@update');
-        Route::put('/albums/{order_id}/rolls/{roll_id}/download',   '\App\Http\Controllers\API\V1\DownloadController@create');
+        Route::get('/downloads',                            'DownloadController@index');
+        Route::put('/downloads',                            'DownloadController@update');
 
-        Route::get('/profile',                              '\App\Http\Controllers\API\V1\UserController@show');
-        Route::put('/profile',                              '\App\Http\Controllers\API\V1\UserController@update');
+        Route::get('/profile',                              'UserController@show');
+        Route::put('/profile',                              'UserController@update');
 
-        Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}',          '\App\Http\Controllers\API\V1\PhotoController@update');
-        Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/rotate',   '\App\Http\Controllers\API\V1\PhotoController@rotate');
+        Route::put('/albums/{order_id}/rolls/{roll_id}/download',                   'DownloadController@create'); // Note: Notice, DownloadController
+        Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}',          'PhotoController@update');
+        Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/rotate',   'PhotoController@rotate');
 
-        Route::delete('/albums/{order_id}/rolls/{roll_id}/images',                  '\App\Http\Controllers\API\V1\PhotoController@delete');
+        Route::delete('/albums/{order_id}/rolls/{roll_id}/images',                  'PhotoController@delete');
 
     });
 
     // Sign in
-    Route::post('/auth/signIn', '\App\Http\Controllers\API\V1\AuthController@signIn');
+    Route::post('/auth/signIn', 'AuthController@signIn');
 
     // Local/private API between FOS -> this project
     Route::middleware('privateapiauth')->group(function(){
-        Route::post('/push-notification', '\App\Http\Controllers\API\V1\PushNotificationController@create');
+
+        Route::post('/push-notification', 'PushNotificationController@create');
+        
     });
 });
