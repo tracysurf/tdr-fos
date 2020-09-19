@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\API\V1;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 /**
  * Class UserController
  * @package App\Http\Controllers
  */
-class UserController extends Controller
+class UserController extends BaseController
 {
 
     /**
