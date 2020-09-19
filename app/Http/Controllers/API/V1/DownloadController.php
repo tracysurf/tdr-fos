@@ -28,7 +28,7 @@ class DownloadController extends BaseController
         ];
 
         $start = microtime(true);
-        $api_request_record = $this->createApiRequestRecord($request, null, null);
+        $api_request_record = $this->createApiRequestRecord($request, null);
 
         $user   = $request->user();
 
@@ -75,7 +75,7 @@ class DownloadController extends BaseController
         ];
 
         $start = microtime(true);
-        $api_request_record = $this->createApiRequestRecord($request, null, null);
+        $api_request_record = $this->createApiRequestRecord($request, null);
 
         $user   = $request->user();
 
@@ -221,7 +221,7 @@ class DownloadController extends BaseController
         ];
 
         $start = microtime(true);
-        $api_request_record = $this->createApiRequestRecord($request, null, null);
+        $api_request_record = $this->createApiRequestRecord($request, null);
 
         $user           = $request->user();
         $download_ids   = $request->get('downloadIds');

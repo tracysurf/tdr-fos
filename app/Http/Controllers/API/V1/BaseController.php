@@ -34,7 +34,7 @@ class BaseController extends Controller
         $endpoint       = implode('/', $endpoint);
 
         // Get customer_id
-        $user           = $request->getUser();
+        $user           = $request->user();
         $customer_id    = null;
         if($user && isset($user->ID))
         {

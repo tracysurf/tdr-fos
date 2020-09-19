@@ -26,7 +26,7 @@ class NotificationController extends BaseController
         ];
 
         $start = microtime(true);
-        $api_request_record = $this->createApiRequestRecord($request, null, null);
+        $api_request_record = $this->createApiRequestRecord($request, null);
 
         $user           = $request->user();
 
@@ -76,7 +76,7 @@ class NotificationController extends BaseController
         ];
 
         $start = microtime(true);
-        $api_request_record = $this->createApiRequestRecord($request, null, null);
+        $api_request_record = $this->createApiRequestRecord($request, null);
 
         $user           = $request->user();
 
@@ -105,7 +105,7 @@ class NotificationController extends BaseController
         ];
 
         $start = microtime(true);
-        $api_request_record = $this->createApiRequestRecord($request, null, null);
+        $api_request_record = $this->createApiRequestRecord($request, null);
 
         $user               = $request->user();
 
