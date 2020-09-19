@@ -115,6 +115,8 @@ class User extends CorcelAuthenticatable
     public function sendPushNotification($title, $body, $data_array = [], $image_url = null)
     {
         // Get device tokens for this user
+        // TODO: At some point determine what an acceptable # of error_count is on the tokens and stop sending to them
+        // TODO: Alternatively, do we reset the errors on the model when a notification is successfully sent? TBD
         $device_tokens  = $this->getPushNotificationTokens();
 
         // Configure the notification object
