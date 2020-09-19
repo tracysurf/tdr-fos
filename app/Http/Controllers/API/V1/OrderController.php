@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Order;
+use App\Photo;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 /**
  * Class OrderController
  * @package App\Http\Controllers
  */
-class OrderController extends Controller
+class OrderController extends BaseController
 {
 
     /**
@@ -20,8 +21,11 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
         $user   = $request->user();
-        $orders = \App\Order::where('customer_id', $user->ID)->orderBy('created_at', 'desc')->get();
+        $orders = Order::where('customer_id', $user->ID)->orderBy('created_at', 'desc')->get();
 
         $return_array = [
             'message'   => '',
@@ -31,10 +35,10 @@ class OrderController extends Controller
         $data = [];
         foreach($orders as $order)
         {
-            $photos         = \App\Photo::where('order_id', $order->id)->whereNull('deleted_at')->get();
+            $photos         = Photo::where('order_id', $order->id)->whereNull('deleted_at')->get();
             $rolls          = [];
-            $thumbnail_url  = '';
 
+            // Only return orders with photos
             if($photos->count())
             {
                 // Determine number of rolls
@@ -44,7 +48,7 @@ class OrderController extends Controller
                         $rolls[$photo->roll] = 1;
                 }
 
-                $first_photo = \App\Photo::where('order_id', $order->id)->whereNull('deleted_at')->first();
+                $first_photo = Photo::where('order_id', $order->id)->whereNull('deleted_at')->first();
 
                 $thumbnail_url = $first_photo->thumbnailURL('_lg');
 
@@ -60,6 +64,9 @@ class OrderController extends Controller
         }
 
         $return_array['data'] = $data;
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }
@@ -79,19 +86,34 @@ class OrderController extends Controller
             'data'      => null,
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
         $user   = $request->user();
-        $order  = \App\Order::find($order_id);
+        $order  = Order::find($order_id);
+
+        $api_request_record->order_id = $order_id;
 
         if( $order->customer_id !== $user->ID)
         {
+            $message = 'Order not found';
+
             // Purposefully being obtuse here as to not confirm existence of this order id
-            $return_array['message'] = 'Order not found';
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
         if( ! $order)
         {
-            $return_array['message'] = 'Order not found';
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
@@ -127,6 +149,9 @@ class OrderController extends Controller
 
         $return_array['data']       = 'successful update';
         $return_array['success']    = true;
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }

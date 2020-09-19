@@ -4,13 +4,12 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Download;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 /**
  * Class RollController
  * @package App\Http\Controllers
  */
-class RollController extends Controller
+class RollController extends BaseController
 {
 
     /**
@@ -28,23 +27,34 @@ class RollController extends Controller
             'data'      => []
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
         $user   = $request->user();
         $order  = \App\Order::find($order_id);
 
+        $api_request_record->order_id = $order_id;
+
         if( $order->customer_id !== $user->ID)
         {
-            return [
-                'message'   => 'Order not found', // Purposefully obtuse here as to not confirm that the order exists
-                'success'   => false,
-            ];
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
+            return $return_array;
         }
 
         if( ! $order)
         {
-            return [
-                'message'   => 'Order not found',
-                'success'   => false
-            ];
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
+            return $return_array;
         }
 
         $photos = \App\Photo::where('order_id', $order_id)->orderBy('roll', 'asc')->get();
@@ -117,6 +127,9 @@ class RollController extends Controller
 
         $return_array['success'] = true;
 
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
+
         return $return_array;
     }
 
@@ -136,19 +149,33 @@ class RollController extends Controller
             'data'      => null,
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
         $user   = $request->user();
         $order  = \App\Order::find($order_id);
 
-        if( $order->customer_id !== $user->ID)
-        {
-            // Purposefully being obtuse here as to not confirm existence of this order id
-            $return_array['message'] = 'Order not found';
-            return $return_array;
-        }
+        $api_request_record->order_id = $order_id;
 
         if( ! $order)
         {
-            $return_array['message'] = 'Order not found';
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
+            return $return_array;
+        }
+
+        if( $order->customer_id !== $user->ID)
+        {
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
@@ -158,7 +185,12 @@ class RollController extends Controller
 
         if( ! $photos)
         {
-            $return_array['message'] = 'No roll with that id found';
+            $message = 'No roll with that id found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
@@ -170,6 +202,9 @@ class RollController extends Controller
 
         $return_array['data']       = 'successful update';
         $return_array['success']    = true;
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }

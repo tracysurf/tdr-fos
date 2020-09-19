@@ -25,11 +25,18 @@ class UserController extends Controller
             'data'      => []
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
         $user   = $request->user();
 
         if( ! $user)
         {
-            $return_array['message'] = 'User not found';
+            $message = 'User not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
 
             return $return_array;
         }
@@ -51,6 +58,9 @@ class UserController extends Controller
         ];
 
         $return_array['success'] = true;
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }

@@ -6,14 +6,13 @@ use App\Download;
 use App\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 
 /**
  * Class DownloadController
  * @package App\Http\Controllers
  */
-class DownloadController extends Controller
+class DownloadController extends BaseController
 {
 
     /**
@@ -27,6 +26,9 @@ class DownloadController extends Controller
             'success'   => false,
             'data'      => null,
         ];
+
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null, null);
 
         $user   = $request->user();
 
@@ -49,6 +51,9 @@ class DownloadController extends Controller
             ];
         }
 
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
+
         $return_array['success']    = true;
         $return_array['data']       = $downloads_return;
 
@@ -69,6 +74,9 @@ class DownloadController extends Controller
             'data'      => null,
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null, null);
+
         $user   = $request->user();
 
         // Check that this order belongs to this customer
@@ -77,10 +85,17 @@ class DownloadController extends Controller
                                 ->first();
         if( ! $check_ownership)
         {
-            $return_array['message'] = 'You don\'t have access to this Album.';
+            $message = 'You don\'t have access to this Album.';
+
+            $return_array['message'] = $message;
+
+            // Update $api_request_record
+            $api_request_record->updateFailed($start, $message);
 
             return $return_array;
         }
+
+        $api_request_record->order_id = $order_id;
 
         // Check for any existing download record for this object that hasn't failed/succeeded
         $existing_download = Download::where('customer_id', $user->ID)
@@ -90,7 +105,12 @@ class DownloadController extends Controller
                                 ->first();
         if($existing_download)
         {
-            $return_array['message'] = 'Completed download for this roll already exists.';
+            $message = 'Completed download for this roll already exists.';
+
+            $return_array['message'] = $message;
+
+            // Update $api_request_record
+            $api_request_record->updateFailed($start, $message);
 
             return $return_array;
         }
@@ -109,7 +129,12 @@ class DownloadController extends Controller
             ->first();
         if($pending_download)
         {
-            $return_array['message'] = 'Download for this roll is already pending.';
+            $message = 'Download for this roll is already pending.';
+
+            $return_array['message'] = $message;
+
+            // Update $api_request_record
+            $api_request_record->updateFailed($start, $message);
 
             return $return_array;
         }
@@ -125,7 +150,12 @@ class DownloadController extends Controller
             $order = Order::find($order_id);
             $woo_id = $order->woo_id;
 
-            $return_array['message'] = "There's been a problem creating your download, please contact support. Order: ".$woo_id." Roll: ".$roll_id;
+            $message = "There's been a problem creating your download, please contact support. Order: ".$woo_id." Roll: ".$roll_id;
+
+            $return_array['message'] = $message;
+
+            // Update $api_request_record
+            $api_request_record->updateFailed($start, $message);
 
             return $return_array;
         }
@@ -147,7 +177,12 @@ class DownloadController extends Controller
         // Check for 5xx type response
         if($response->failed() || $response->serverError())
         {
-            $return_array['message'] = 'Unknown api error';
+            $message = 'Unknown api error';
+
+            $return_array['message'] = $message;
+
+            // Update $api_request_record
+            $api_request_record->updateFailed($start, $message);
 
             return $return_array;
         }
@@ -158,11 +193,17 @@ class DownloadController extends Controller
         {
             $return_array['message'] = $response_array['message'];
 
+            // Update $api_request_record
+            $api_request_record->updateFailed($start, $response_array['message']);
+
             return $return_array;
         }
 
         $return_array['success']    = true;
         $return_array['data']       = 'successful update';
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }
@@ -179,6 +220,9 @@ class DownloadController extends Controller
             'data'      => null,
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null, null);
+
         $user           = $request->user();
         $download_ids   = $request->get('downloadIds');
 
@@ -190,7 +234,11 @@ class DownloadController extends Controller
                             ->first();
             if( ! $download)
             {
-                $return_array['message'] = 'Download not found';
+                $message = 'Download not found';
+
+                $return_array['message'] = $message;
+
+                $api_request_record->updateFailed($start, $message);
 
                 return $return_array;
             }
@@ -201,6 +249,8 @@ class DownloadController extends Controller
 
         $return_array['success']    = true;
         $return_array['data']       = 'updated';
+
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }

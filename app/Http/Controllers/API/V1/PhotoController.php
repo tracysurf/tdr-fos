@@ -4,13 +4,12 @@ namespace App\Http\Controllers\API\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use App\Http\Controllers\Controller;
 
 /**
  * Class PhotoController
  * @package App\Http\Controllers
  */
-class PhotoController extends Controller
+class PhotoController extends BaseController
 {
 
     /**
@@ -30,19 +29,34 @@ class PhotoController extends Controller
             'data'      => null,
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
         $user   = $request->user();
         $order  = \App\Order::find($order_id);
 
+        $api_request_record->order_id = $order_id;
+
         if( $order->customer_id !== $user->ID)
         {
+            $message = 'Order not found';
+
             // Purposefully being obtuse here as to not confirm existence of this order id
-            $return_array['message'] = 'Order not found';
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
         if( ! $order)
         {
-            $return_array['message'] = 'Order not found';
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
@@ -50,7 +64,12 @@ class PhotoController extends Controller
 
         if( ! $photo)
         {
-            $return_array['message'] = 'Photo not found';
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
@@ -69,12 +88,20 @@ class PhotoController extends Controller
         $updated = $photo->save();
         if( ! $updated)
         {
-            $return_array['message'] = 'Photo update failed';
+            $message = 'Photo update failed';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
         $return_array['data']       = 'updated';
         $return_array['success']    = true;
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }
@@ -96,8 +123,13 @@ class PhotoController extends Controller
             'data'      => null,
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
         $user   = $request->user();
         $order  = \App\Order::find($order_id);
+
+        $api_request_record->order_id = $order_id;
 
         if( $order->customer_id !== $user->ID)
         {
@@ -108,7 +140,12 @@ class PhotoController extends Controller
 
         if( ! $order)
         {
-            $return_array['message'] = 'Order not found';
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
@@ -116,7 +153,12 @@ class PhotoController extends Controller
 
         if( ! $photo)
         {
-            $return_array['message'] = 'Photo not found';
+            $message = 'Photo not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
@@ -129,7 +171,11 @@ class PhotoController extends Controller
         // Check for 5xx type response
         if($response->failed() || $response->serverError())
         {
-            $return_array['message'] = 'Unknown api error';
+            $message = 'Unknown api error';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
 
             return $return_array;
         }
@@ -140,6 +186,8 @@ class PhotoController extends Controller
         {
             $return_array['message'] = $response_array['message'];
 
+            $api_request_record->updateFailed($start, $response_array['message']);
+
             return $return_array;
         }
 
@@ -149,6 +197,9 @@ class PhotoController extends Controller
         $return_array['data']       = 'updated';
         $return_array['thumbnail']  = $thumbnail_data;
         $return_array['success']    = true;
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }
@@ -169,19 +220,33 @@ class PhotoController extends Controller
             'data'      => null,
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
         $user   = $request->user();
         $order  = \App\Order::find($order_id);
 
+        $api_request_record->order_id = $order_id;
+
         if( $order->customer_id !== $user->ID)
         {
-            // Purposefully being obtuse here as to not confirm existence of this order id
-            $return_array['message'] = 'Order not found';
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
         if( ! $order)
         {
-            $return_array['message'] = 'Order not found';
+            $message = 'Order not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
             return $return_array;
         }
 
@@ -192,7 +257,12 @@ class PhotoController extends Controller
 
             if( ! $photo)
             {
-                $return_array['message'] = 'Photo ('.$delete_image_id.') not found';
+                $message = 'Photo ('.$delete_image_id.') not found';
+
+                $return_array['message'] = $message;
+
+                $api_request_record->updateFailed($start, $message);
+
                 return $return_array;
             }
 
@@ -203,6 +273,9 @@ class PhotoController extends Controller
 
         $return_array['data']       = 'updated';
         $return_array['success']    = true;
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }

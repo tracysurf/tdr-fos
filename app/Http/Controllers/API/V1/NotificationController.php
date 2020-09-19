@@ -5,13 +5,12 @@ namespace App\Http\Controllers\API\V1;
 use Carbon\Carbon;
 use App\Notification;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 /**
  * Class NotificationController
  * @package App\Http\Controllers
  */
-class NotificationController extends Controller
+class NotificationController extends BaseController
 {
 
     /**
@@ -26,7 +25,11 @@ class NotificationController extends Controller
             'data'      => null,
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null, null);
+
         $user           = $request->user();
+
         $notifications  = Notification::where('customer_id', $user->ID)
                         ->orderBy('id', 'desc')
                         ->take(50)
@@ -54,6 +57,9 @@ class NotificationController extends Controller
         $return_array['data']       = $notifications_return;
         $return_array['badge']      = $unseen_count;
 
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
+
         return $return_array;
     }
 
@@ -69,6 +75,9 @@ class NotificationController extends Controller
             'data'      => null,
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null, null);
+
         $user           = $request->user();
 
         $return_array['data'] = Notification::where('customer_id', $user->ID)
@@ -76,6 +85,9 @@ class NotificationController extends Controller
                         ->count();
 
         $return_array['success'] = true;
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }
@@ -91,6 +103,9 @@ class NotificationController extends Controller
             'success'   => false,
             'data'      => null,
         ];
+
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null, null);
 
         $user               = $request->user();
 
@@ -132,6 +147,9 @@ class NotificationController extends Controller
 
         $return_array['success']    = true;
         $return_array['data']       = 'updated';
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
 
         return $return_array;
     }
