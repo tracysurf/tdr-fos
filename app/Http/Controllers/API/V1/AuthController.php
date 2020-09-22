@@ -29,9 +29,17 @@ class AuthController extends BaseController
 
         $user = User::where('user_email', $request->email)->first();
 
-        $api_request_record->customer_id = $user->ID;
+        if( ! $user)
+        {
 
-        if (! $user || ! Auth::validate(['email' => $request->email, 'password' => $request->password])) {
+        }
+
+        if ( ! $user || ! Auth::validate(['email' => $request->email, 'password' => $request->password]))
+        {
+            if($user)
+            {
+                $api_request_record->customer_id = $user->ID;
+            }
 
             $message = 'The username or password is incorrect.';
 
@@ -44,6 +52,8 @@ class AuthController extends BaseController
                 'data'      => null
             ];
         }
+
+        $api_request_record->customer_id = $user->ID;
 
         // Create auth/bearer token
         $token = $user->createToken($request->device_name)->plainTextToken;
