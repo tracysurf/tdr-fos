@@ -6,7 +6,34 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class MobileApiRequest
+ *
  * @package App
+ * @property int $id
+ * @property string $endpoint
+ * @property string $controller
+ * @property int|null $customer_id
+ * @property int|null $order_id
+ * @property int $success
+ * @property float|null $execution_time
+ * @property mixed $parameters
+ * @property string|null $error_message
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereController($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereCustomerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereEndpoint($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereErrorMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereExecutionTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereParameters($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereSuccess($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MobileApiRequest whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class MobileApiRequest extends Model
 {

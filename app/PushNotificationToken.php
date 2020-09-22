@@ -5,6 +5,32 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\PushNotificationToken
+ *
+ * @property int $id
+ * @property int $customer_id
+ * @property string|null $device_name
+ * @property int|null $error_count
+ * @property mixed $errors
+ * @property string|null $last_error_at
+ * @property string $token
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken whereCustomerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken whereDeviceName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken whereErrorCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken whereErrors($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken whereLastErrorAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken whereToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PushNotificationToken whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class PushNotificationToken extends Model
 {
     protected $dates = [

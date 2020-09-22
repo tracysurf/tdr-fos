@@ -18,7 +18,51 @@ use Laravel\Sanctum\HasApiTokens;
 
 /**
  * Class User
+ *
  * @package App
+ * @property int $ID
+ * @property string $user_login
+ * @property string $user_pass
+ * @property string $user_nicename
+ * @property string $user_email
+ * @property string $user_url
+ * @property \Illuminate\Support\Carbon $user_registered
+ * @property string $user_activation_key
+ * @property int $user_status
+ * @property string $display_name
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Corcel\Model\Comment[] $comments
+ * @property-read int|null $comments_count
+ * @property-read \Corcel\Model\Collection\MetaCollection|\Corcel\Model\Meta\UserMeta[] $fields
+ * @property-read int|null $fields_count
+ * @property-read \Corcel\Concerns\AdvancedCustomFields $acf
+ * @property-read string $avatar
+ * @property-read \Corcel\Model\Collection\MetaCollection|\Corcel\Model\Meta\UserMeta[] $meta
+ * @property-read int|null $meta_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Notification[] $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Corcel\Model\Post[] $posts
+ * @property-read int|null $posts_count
+ * @property-write mixed $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|User hasMeta($meta, $value = null, $operator = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder|User hasMetaLike($meta, $value = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|User newest()
+ * @method static \Illuminate\Database\Eloquent\Builder|User oldest()
+ * @method static \Illuminate\Database\Eloquent\Builder|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereID($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUserActivationKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUserEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUserLogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUserNicename($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUserPass($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUserRegistered($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUserStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUserUrl($value)
+ * @mixin \Eloquent
  */
 class User extends CorcelAuthenticatable
 {
