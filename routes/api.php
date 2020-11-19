@@ -43,6 +43,7 @@ Route::prefix('v1')->namespace('API\\V1')->group(function() {
         Route::put('/albums/{order_id}/rolls/{roll_id}/download',                   'DownloadController@create'); // Note: Notice, DownloadController
         Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}',          'PhotoController@update');
         Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/rotate',   'PhotoController@rotate');
+        Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/save_editor', 'PhotoController@save_editor');
 
         Route::delete('/albums/{order_id}/rolls/{roll_id}/images',                  'PhotoController@delete');
 
