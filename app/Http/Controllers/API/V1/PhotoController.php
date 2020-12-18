@@ -337,7 +337,7 @@ class PhotoController extends BaseController
         }
 
         // Make request to FOS api to trigger the save_editor
-        $url = getenv('FOS_API_URL').'/api/mobile/photo/'.$photo_id.'/save_editor';
+        $url = getenv('FOS_API_URL').'/api/mobile/photo/'.$photo_id.'/save-editor';
         $response = Http::post($url, [
             'token' => getenv('FOS_API_TOKEN'),
             'operations' => $request->get('operations'),
