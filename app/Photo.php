@@ -41,6 +41,18 @@ use Illuminate\Database\Eloquent\Model;
 class Photo extends Model
 {
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function metadata()
+    {
+        return $this->hasOne(PhotoMetadata::class);
+    }
+
+    /**
+     * @param string $size
+     * @return string
+     */
     public function thumbnailURL($size = '_social')
     {
         $cdn = env('DO_SPACES_URL');

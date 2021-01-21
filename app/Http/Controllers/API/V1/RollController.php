@@ -108,10 +108,18 @@ class RollController extends BaseController
                     'lg-original'   => $roll_photo->thumbnailURL('_lg-original')
                 ];
 
+                $serialization = null;
+                $metadata = $roll_photo->metadata()->first();
+                if($metadata)
+                {
+                    $serialization = $metadata->editor_operations;
+                }
+
                 $roll_photos_return[] = [
                     'id'            => $roll_photo->id,
                     'image_urls'    => $image_urls,
                     'liked'         => $roll_photo->favorite ? true : false,
+                    'serialization' => $serialization,
                     'updated_at'    => $roll_photo->updated_at
                 ];
 
