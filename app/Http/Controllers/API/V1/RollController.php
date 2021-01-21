@@ -105,7 +105,7 @@ class RollController extends BaseController
                     'sm'            => $roll_photo->thumbnailURL('_sm'),
                     'lg'            => $roll_photo->thumbnailURL('_lg'),
                     'social'        => $roll_photo->thumbnailURL('_social'),
-                    'lg-original'   => $roll_photo->thumbnailURL('lg-original')
+                    'lg-original'   => $roll_photo->thumbnailURL('_lg-original')
                 ];
 
                 $roll_photos_return[] = [
