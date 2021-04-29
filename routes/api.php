@@ -40,6 +40,8 @@ Route::prefix('v1')->namespace('API\\V1')->group(function() {
         Route::get('/profile',                              'UserController@show');
         Route::put('/profile',                              'UserController@update');
 
+        Route::get('/shop/products',                        'ShopController@products');
+
         Route::put('/albums/{order_id}/rolls/{roll_id}/download',                   'DownloadController@create'); // Note: Notice, DownloadController
         Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}',          'PhotoController@update');
         Route::put('/albums/{order_id}/rolls/{roll_id}/images/{photo_id}/rotate',   'PhotoController@rotate');
