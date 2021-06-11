@@ -76,11 +76,18 @@ class UserController extends BaseController
             'data'      => []
         ];
 
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
         $user = $request->user();
 
         if( ! $user)
         {
-            $return_array['message'] = 'User not found';
+            $message = 'User not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
 
             return $return_array;
         }
