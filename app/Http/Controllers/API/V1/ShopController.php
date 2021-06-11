@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\TDR\FOSAPI\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -30,10 +31,8 @@ class ShopController extends BaseController
         $user   = $request->user();
 
         // Make request to FOS api get the WooCommerce products
-        $url = getenv('FOS_API_URL').'/api/mobile/woo-commerce-products';
-        $response = Http::post($url, [
-            'token' => getenv('FOS_API_TOKEN')
-        ]);
+        $fos_api_client = new Client();
+        $response = $fos_api_client->getProducts();
 
         // Check for 5xx type response
         if($response->failed() || $response->serverError())

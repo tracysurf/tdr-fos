@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Download;
 use App\Order;
+use App\TDR\FOSAPI\Client;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -169,10 +170,8 @@ class DownloadController extends BaseController
         $download->save();
 
         // Push the download task to the queue
-        $url = getenv('FOS_API_URL').'/api/mobile/download/'.$download->id.'/queue';
-        $response = Http::post($url, [
-            'token' => getenv('FOS_API_TOKEN')
-        ]);
+        $fos_api_client = new Client();
+        $response = $fos_api_client->pushDownloadToQueue($download->id);
 
         // Check for 5xx type response
         if($response->failed() || $response->serverError())

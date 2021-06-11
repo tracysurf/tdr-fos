@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\TDR\FOSAPI\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -163,10 +164,8 @@ class PhotoController extends BaseController
         }
 
         // Make request to FOS api to trigger the rotation
-        $url = getenv('FOS_API_URL').'/api/mobile/photo/'.$photo_id.'/rotate';
-        $response = Http::post($url, [
-            'token' => getenv('FOS_API_TOKEN')
-        ]);
+        $fos_api_client = new Client();
+        $response = $fos_api_client->rotatePhoto($photo_id);
 
         // Check for 5xx type response
         if($response->failed() || $response->serverError())
@@ -336,12 +335,9 @@ class PhotoController extends BaseController
             return $return_array;
         }
 
-        // Make request to FOS api to trigger the save_editor
-        $url = getenv('FOS_API_URL').'/api/mobile/photo/'.$photo_id.'/save-editor';
-        $response = Http::post($url, [
-            'token' => getenv('FOS_API_TOKEN'),
-            'operations' => $request->get('operations'),
-        ]);
+        // Make request to FOS api to trigger the save_editor method
+        $fos_api_client = new Client();
+        $response = $fos_api_client->saveEditorState($photo_id, $request->get('operations'));
 
         // Check for 5xx type response
         if($response->failed() || $response->serverError())
