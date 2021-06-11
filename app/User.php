@@ -2,11 +2,13 @@
 
 namespace App;
 
+use App\TDR\FOSAPI\Client;
 use Exception;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 //use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Corcel\Model\User as CorcelAuthenticatable;
+use Illuminate\Support\Facades\Cache;
 use Kreait\Firebase\Exception\Messaging\InvalidMessage;
 use Kreait\Firebase\Messaging\ApnsConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -149,6 +151,93 @@ class User extends CorcelAuthenticatable
     }
 
     /**
+     * @return string
+     */
+    public function shippingAddressCacheKey()
+    {
+        return 'cus_ship_add_'.$this->ID;
+    }
+
+    /**
+     * @return string
+     */
+    public function billingAddressCacheKey()
+    {
+        return 'cus_bill_add_'.$this->ID;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShippingAddress()
+    {
+        // Send API request to FOS to get the customers shipping info
+        $client     = new Client();
+        $addresses  = $client->getCustomerAddresses($this->ID);
+        $address    = $addresses['shipping'];
+
+        // Cache it
+        Cache::put($this->shippingAddressCacheKey(), $address, 90);
+        return $address;
+    }
+
+    /**
+     * @param array $address
+     * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function updateShippingAddress($address = [])
+    {
+        // Dump local cache of shipping address
+        Cache::delete($this->shippingAddressCacheKey());
+
+        // Send API request to FOS to update the data
+        $client     = new Client();
+        $data       = ['shipping' => $address];
+        $response   = $client->updateCustomerAddresses($this->ID, $data);
+
+        // Update cache
+        Cache::put($this->shippingAddressCacheKey(), $address, 90);
+        return true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBillingAddress()
+    {
+        // Send API request to FOS to get the customers billing info
+        $client     = new Client();
+        $addresses  = $client->getCustomerAddresses($this->ID);
+        $address    = $addresses['billing'];
+
+        // Cache it
+        Cache::put($this->billingAddressCacheKey(), $address, 90);
+        return $address;
+    }
+
+    /**
+     * @param array $address
+     * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function updateBillingAddress($address = [])
+    {
+        // Dump local cache of shipping address
+        Cache::delete($this->billingAddressCacheKey());
+
+        // Send API request to FOS to update the data
+        $client     = new Client();
+        $data       = ['billing' => $address];
+        $response   = $client->updateCustomerAddresses($this->ID, $data);
+
+        // Update cache
+        Cache::put($this->billingAddressCacheKey(), $address, 90);
+        return true;
+    }
+
+
+    /**
      * @param $title
      * @param $body
      * @param array $data_array
@@ -205,7 +294,7 @@ class User extends CorcelAuthenticatable
                 ->withNotification($notification)
                 ->withData($push_data)
                 ->withApnsConfig($apns);
-            
+
             // Validate the message
             $validated = false;
             try{

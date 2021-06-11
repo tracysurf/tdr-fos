@@ -147,6 +147,76 @@ class UserController extends BaseController
         $return_array['success']    = true;
         $return_array['data']       = 'successful update';
 
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
+
         return $return_array;
+    }
+
+    public function showAddresses(Request $request)
+    {
+        $return_array = [
+            'message'   => '',
+            'success'   => false,
+            'data'      => []
+        ];
+
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
+        $user   = $request->user();
+
+        if( ! $user)
+        {
+            $message = 'User not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
+            return $return_array;
+        }
+
+        $shipping_address   = $user->getShippingAddress();
+        $billing_address    = $user->getBillingAddress();
+
+        $return_array['success']    = true;
+        $return_array['data']       = [
+            'shipping_address'  => $shipping_address,
+            'billing_address'   => $billing_address
+        ];
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
+
+        return $return_array;
+    }
+
+    public function updateAddresses(Request $request)
+    {
+        $return_array = [
+            'message'   => '',
+            'success'   => false,
+            'data'      => []
+        ];
+
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
+        $user   = $request->user();
+
+        if( ! $user)
+        {
+            $message = 'User not found';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
+            return $return_array;
+        }
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
     }
 }
