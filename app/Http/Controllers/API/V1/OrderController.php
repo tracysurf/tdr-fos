@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Order;
 use App\Photo;
+use App\TDR\FOSAPI\Client;
 use Illuminate\Http\Request;
 
 /**
@@ -149,6 +150,119 @@ class OrderController extends BaseController
 
         $return_array['data']       = 'successful update';
         $return_array['success']    = true;
+
+        // Update $api_request_record
+        $api_request_record->updateSuccess($start);
+
+        return $return_array;
+    }
+
+    public function camel_to_snake($input)
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
+    }
+    public function snakeToCamel($input)
+    {
+        return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $input))));
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function create(Request $request)
+    {
+        $return_array = [
+            'message'   => '',
+            'success'   => false,
+            'data'      => null,
+        ];
+
+        $start = microtime(true);
+        $api_request_record = $this->createApiRequestRecord($request, null);
+
+        $user   = $request->user();
+
+        // Unpack the order details
+        $billing_address    = $request->get('billingAddress');
+        $shipping_address   = $request->get('shippingAddress');
+        $line_items         = $request->get('lineItems');
+        $return_shipping    = $request->get('returnShipping');
+
+        $formatted_billing_address = [];
+        foreach($billing_address as $key => $value)
+        {
+            $formatted_billing_address[$this->camel_to_snake($key)] = $value;
+        }
+
+        $formatted_shipping_address = [];
+        foreach($shipping_address as $key => $value)
+        {
+            $formatted_shipping_address[$this->camel_to_snake($key)] = $value;
+        }
+
+        $formatted_line_items = [];
+        foreach($line_items as $m_key => $line_item)
+        {
+            foreach($line_item as $key => $value)
+            {
+                $formatted_line_items[$m_key][$this->camel_to_snake($key)] = $value;
+            }
+        }
+
+        $formatted_return_shipping = [];
+        foreach($return_shipping as $key => $value)
+        {
+            $formatted_return_shipping[$this->camel_to_snake($key)] = $value;
+        }
+
+        // Push the download task to the queue
+        $fos_api_client = new Client();
+        $response = $fos_api_client->createOrder($user->id,
+                                                    $formatted_shipping_address,
+                                                    $formatted_billing_address,
+                                                    $formatted_return_shipping,
+                                                    $formatted_line_items);
+
+        // Check for 5xx type response
+        if($response->failed() || $response->serverError())
+        {
+            $message = 'Unknown api error';
+
+            $return_array['message'] = $message;
+
+            $api_request_record->updateFailed($start, $message);
+
+            return $return_array;
+        }
+
+        // Check for a non-success response with error message
+        $response_array = $response->json();
+        if($response_array['success'] === false || $response_array['success'] === 'false')
+        {
+            $return_array['message'] = $response_array['message'];
+
+            $api_request_record->updateFailed($start, $response_array['message']);
+
+            return $return_array;
+        }
+
+        // Get the order_id and totals from the response
+        $order_id   = $response_array['order_id'];
+        $totals     = $response_array['totals'];
+
+        $formatted_totals = [];
+        foreach($totals as $key => $value)
+        {
+            $formatted_totals[$this->snakeToCamel($key)] = $value;
+        }
+
+        // Associate the order_id with this API request
+        $api_request_record->order_id = $order_id;
+
+        $return_array['success']            = true;
+        $return_array['data']['orderId']    = $order_id;
+        $return_array['data']['totals']     = $formatted_totals;
 
         // Update $api_request_record
         $api_request_record->updateSuccess($start);

@@ -80,6 +80,28 @@ class Client
     }
 
     /**
+     * @param $customer_id
+     * @param $shipping_address
+     * @param $billing_address
+     * @param $return_shipping
+     * @param $line_items
+     * @return Response
+     */
+    public function createOrder($customer_id, $shipping_address, $billing_address, $return_shipping, $line_items)
+    {
+        $url = getenv('FOS_API_URL').'/api/mobile/order';
+
+        return Http::post($url, [
+            'token'             => getenv('FOS_API_TOKEN'),
+            'customer_id'       => $customer_id,
+            'shipping_address'  => $shipping_address,
+            'billing_address'   => $billing_address,
+            'return_shipping'   => $return_shipping,
+            'line_items'        => $line_items
+        ]);
+    }
+
+    /**
      * @return Response
      */
     public function getProducts()

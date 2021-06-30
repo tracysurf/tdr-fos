@@ -49,6 +49,8 @@ Route::prefix('v1')->namespace('API\\V1')->group(function() {
 
         Route::delete('/albums/{order_id}/rolls/{roll_id}/images',                  'PhotoController@delete');
 
+        Route::post('/orders',                              'OrderController@create');
+
     });
 
     // Sign in
