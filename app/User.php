@@ -174,7 +174,7 @@ class User extends CorcelAuthenticatable
         // Send API request to FOS to get the customers shipping info
         $client     = new Client();
         $addresses  = $client->getCustomerAddresses($this->ID);
-        $addresses  = json_decode($addresses);
+        $addresses  = json_decode($addresses, true);
         $address    = [];
         if(isset($addresses['success']) && $addresses['success'] === true)
         {
@@ -219,7 +219,7 @@ class User extends CorcelAuthenticatable
         // Send API request to FOS to get the customers billing info
         $client     = new Client();
         $addresses  = $client->getCustomerAddresses($this->ID);
-        $addresses  = json_decode($addresses);
+        $addresses  = json_decode($addresses, true);
         $address    = [];
         if(isset($addresses['success']) && $addresses['success'] === true)
         {
