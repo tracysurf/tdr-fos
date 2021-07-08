@@ -216,7 +216,7 @@ class OrderController extends BaseController
             $formatted_return_shipping[$this->camel_to_snake($key)] = $value;
         }
 
-        // Push the download task to the queue
+        // Push the order to the FOS API
         $fos_api_client = new Client();
         $response = $fos_api_client->createOrder($user->id,
                                                     $formatted_shipping_address,
