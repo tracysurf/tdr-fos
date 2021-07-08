@@ -102,6 +102,24 @@ class Client
     }
 
     /**
+     * @param $order_id
+     * @param $payment_gateway
+     * @param $payment_token
+     * @return Response
+     */
+    public function createPayment($order_id, $payment_gateway, $payment_token)
+    {
+        $url = getenv('FOS_API_URL').'/api/mobile/order/'.$order_id.'/payment';
+
+        return Http::post($url, [
+            'token'             => getenv('FOS_API_TOKEN'),
+            'order_id'          => $order_id,
+            'payment_gateway'   => $payment_gateway,
+            'payment_token'     => $payment_token
+        ]);
+    }
+
+    /**
      * @return Response
      */
     public function getProducts()
