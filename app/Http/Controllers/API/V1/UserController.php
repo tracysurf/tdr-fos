@@ -27,6 +27,7 @@ class UserController extends BaseController
         $start = microtime(true);
         $api_request_record = $this->createApiRequestRecord($request, null);
 
+        /** @var \App\User $user */
         $user   = $request->user();
 
         if( ! $user)
@@ -49,11 +50,36 @@ class UserController extends BaseController
         // Get user's push notifications token
         $push_token     = $user->getDevicePushNotificationTokenFromBearer($request->bearerToken());
 
+        // Get user's shipping and billing addresses
+        $shipping_address   = $user->getShippingAddress();
+        $billing_address    = $user->getBillingAddress();
+        $formatted_billing_address = [];
+        foreach($billing_address as $key => $value)
+        {
+            $formatted_billing_address[$this->snakeToCamel($key)] = $value;
+        }
+        $formatted_shipping_address = [];
+        foreach($shipping_address as $key => $value)
+        {
+            $formatted_shipping_address[$this->snakeToCamel($key)] = $value;
+        }
+
+        // Get the user's saved payment methods
+        $saved_tokens = $user->getPaymentMethods();
+        $formatted_payment_methods = [];
+        foreach($saved_tokens as $key => $token)
+        {
+            $formatted_payment_methods[$this->snakeToCamel($key)] = $value;
+        }
+
         $return_array['data'] = [
             'notificationsToken'    => $push_token,
             'smsEnabled'            => $sms_enabled,
             'phoneNumber'           => $phone_number,
             'email'                 => $user->user_email,
+            'billingAddress'        => $formatted_billing_address,
+            'shippingAddress'       => $formatted_shipping_address,
+            'payment_methods'       => $formatted_payment_methods
         ];
 
         $return_array['success'] = true;
@@ -218,5 +244,14 @@ class UserController extends BaseController
 
         // Update $api_request_record
         $api_request_record->updateSuccess($start);
+    }
+
+    public function camel_to_snake($input)
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
+    }
+    public function snakeToCamel($input)
+    {
+        return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $input))));
     }
 }

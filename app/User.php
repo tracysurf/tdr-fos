@@ -4,7 +4,6 @@ namespace App;
 
 use App\TDR\FOSAPI\Client;
 use Exception;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 //use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Corcel\Model\User as CorcelAuthenticatable;
@@ -236,6 +235,70 @@ class User extends CorcelAuthenticatable
         return true;
     }
 
+    /**
+     * Get this users saved payment methods
+     *
+     * @return array
+     */
+    public function getPaymentMethods()
+    {
+        $tokens = \DB::connection('wordpress')
+            ->table('wp_woocommerce_payment_tokens')
+            ->where('user_id', $this->ID)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $payment_tokens = [];
+        if($tokens->count())
+        {
+            foreach($tokens as $token)
+            {
+                // Get token meta data
+                $token_meta_rows = \DB::connection('wordpress')
+                    ->table('wp_woocommerce_payment_tokenmeta')
+                    ->where('payment_token_id', $token->token_id)
+                    ->get();
+
+                $token_meta_fields = [
+                    'card_type'     => '',
+                    'expiry_month'  => '',
+                    'expiry_year'   => '',
+                    'last4'         => '',
+                ];
+
+                // Loop through these meta rows returned by the database to map their respective key/values with the
+                // $token_meta_fields array and it's keys
+                foreach($token_meta_rows as $token_meta_row)
+                {
+                    $meta_key   = $token_meta_row->meta_key;
+                    $meta_value = $token_meta_row->meta_value;
+
+                    foreach($token_meta_fields as $token_meta_field_key => $token_meta_field_value)
+                    {
+                        if($token_meta_field_key === $meta_key)
+                        {
+                            $token_meta_fields[$token_meta_field_key] = $meta_value;
+                        }
+                    }
+                }
+
+                // Drop the token details and it's meta-details into an array that we'll return
+                $payment_tokens[] = [
+                    'token_id'      => $token->token_id,
+                    'gateway_id'    => $token->gateway_id,
+                    'token'         => $token->token,
+                    'type'          => $token->type,
+                    'is_default'    => $token->is_default,
+                    'card_type'     => $token_meta_fields['card_type'],
+                    'expiry_month'  => $token_meta_fields['expiry_month'],
+                    'expiry_year'   => $token_meta_fields['expiry_year'],
+                    'last4'         => $token_meta_fields['last4']
+                ];
+            }
+        }
+
+        return $payment_tokens;
+    }
 
     /**
      * @param $title
