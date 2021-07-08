@@ -167,13 +167,23 @@ class User extends CorcelAuthenticatable
 
     /**
      * @return mixed
+     * @throws Exception
      */
     public function getShippingAddress()
     {
         // Send API request to FOS to get the customers shipping info
         $client     = new Client();
         $addresses  = $client->getCustomerAddresses($this->ID);
-        $address    = $addresses['shipping'];
+        $addresses  = json_decode($addresses);
+        $address    = [];
+        if(isset($addresses['success']) && $addresses['success'] === true)
+        {
+            $address = $addresses['data']['addresses']['shipping'];
+        }
+        else
+        {
+            throw new Exception('Failed to getShippingAddress');
+        }
 
         // Cache it
         Cache::put($this->shippingAddressCacheKey(), $address, 90);
@@ -202,13 +212,23 @@ class User extends CorcelAuthenticatable
 
     /**
      * @return mixed
+     * @throws Exception
      */
     public function getBillingAddress()
     {
         // Send API request to FOS to get the customers billing info
         $client     = new Client();
         $addresses  = $client->getCustomerAddresses($this->ID);
-        $address    = $addresses['billing'];
+        $addresses  = json_decode($addresses);
+        $address    = [];
+        if(isset($addresses['success']) && $addresses['success'] === true)
+        {
+            $address = $addresses['data']['addresses']['billing'];
+        }
+        else
+        {
+            throw new Exception('Failed to getBillingAddress');
+        }
 
         // Cache it
         Cache::put($this->billingAddressCacheKey(), $address, 90);
