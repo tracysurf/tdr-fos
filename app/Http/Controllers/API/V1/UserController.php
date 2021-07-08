@@ -79,7 +79,7 @@ class UserController extends BaseController
             'email'                 => $user->user_email,
             'billingAddress'        => $formatted_billing_address,
             'shippingAddress'       => $formatted_shipping_address,
-            'payment_methods'       => $formatted_payment_methods
+            'paymentMethods'        => $formatted_payment_methods
         ];
 
         $return_array['success'] = true;
