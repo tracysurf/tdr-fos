@@ -182,6 +182,8 @@ class User extends CorcelAuthenticatable
         }
         else
         {
+            \Log::debug('Shipping Address below');
+            \Log::debug($addresses);
             throw new Exception('Failed to getShippingAddress');
         }
 
@@ -227,6 +229,8 @@ class User extends CorcelAuthenticatable
         }
         else
         {
+            \Log::debug('Billing Address below');
+            \Log::debug($addresses);
             throw new Exception('Failed to getBillingAddress');
         }
 
