@@ -279,7 +279,7 @@ class User extends CorcelAuthenticatable
             {
                 // Get token meta data
                 $token_meta_rows = \DB::connection('wordpress')
-                    ->table('wp_woocommerce_payment_tokenmeta')
+                    ->table('woocommerce_payment_tokenmeta')
                     ->where('payment_token_id', $token->token_id)
                     ->get();
 
