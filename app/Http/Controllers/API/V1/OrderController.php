@@ -120,6 +120,14 @@ class OrderController extends BaseController
 
         // Update the name if applicable
         $name = $request->get('name');
+        if($name === null || $name === '')
+        {
+            $message = 'Name is empty, please supply a valid name.';
+            $return_array['message'] = $message;
+
+            return $return_array;
+        }
+        
         if($order->name !== $name)
         {
             $order->name = $name;
