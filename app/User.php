@@ -267,7 +267,7 @@ class User extends CorcelAuthenticatable
     public function getPaymentMethods()
     {
         $tokens = \DB::connection('wordpress')
-            ->table('wp_woocommerce_payment_tokens')
+            ->table('woocommerce_payment_tokens')
             ->where('user_id', $this->ID)
             ->orderBy('id', 'desc')
             ->get();
