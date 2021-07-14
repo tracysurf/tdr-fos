@@ -50,7 +50,7 @@ Route::prefix('v1')->namespace('API\\V1')->group(function() {
         Route::delete('/albums/{order_id}/rolls/{roll_id}/images',                  'PhotoController@delete');
 
         Route::post('/orders',                              'OrderController@create');
-        Route::post('/orders/{order_id}/payment',           'OrderController@create');
+        Route::post('/orders/{order_id}/payment',           'PaymentController@create');
 
     });
 
@@ -61,6 +61,5 @@ Route::prefix('v1')->namespace('API\\V1')->group(function() {
     Route::middleware('privateapiauth')->group(function(){
 
         Route::post('/push-notification', 'PushNotificationController@create');
-        
     });
 });
