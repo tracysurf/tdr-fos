@@ -269,7 +269,7 @@ class User extends CorcelAuthenticatable
         $tokens = \DB::connection('wordpress')
             ->table('woocommerce_payment_tokens')
             ->where('user_id', $this->ID)
-            ->orderBy('id', 'desc')
+            ->orderBy('token_id', 'desc')
             ->get();
 
         $payment_tokens = [];
